@@ -15,12 +15,11 @@ while(1):
     hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 
     # define ball color in HSV
-    ORANGE_MIN = np.array([6, 50, 50],np.uint8)
-    ORANGE_MAX = np.array([12, 255, 255],np.uint8)
+    ORANGE_MIN = np.array([6, 125, 125],np.uint8)
+    ORANGE_MAX = np.array([15, 255, 255],np.uint8)
 
     frame_threshed = cv2.inRange(hsv, ORANGE_MIN, ORANGE_MAX)
     cv2.imshow('output2.jpg', frame_threshed)
-
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
