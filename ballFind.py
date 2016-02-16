@@ -14,27 +14,20 @@ args = vars(ap.parse_args())
 # define the lower and upper boundary for ball
 # and then initialize the list of tracked points
 ballLower = (5, 160, 160)
-ballUpper = (10, 255, 255)
+ballUpper = (20, 255, 255)
 pts = deque(maxlen=args["buffer"])
 
-# if a video path was not supplied, grab the reference
-# to the webcam
-if not args.get("video", False):
-	camera = cv2.VideoCapture(0)
 
-# otherwise, grab a reference to the video file
-else:
-	camera = cv2.VideoCapture(args["video"])
+camera = cv2.VideoCapture(0)
+
 
     # keep looping
 while True:
 	# grab the current frame
 	(grabbed, frame) = camera.read()
+	grabbed = cv2.flip(grabbed,1)
+	frame = cv2.flip(frame, 1)
 
-	# if we are viewing a video and we did not grab a frame,
-	# then we have reached the end of the video
-	if args.get("video") and not grabbed:
-		break
 
 	# resize the frame, blur it, and convert it to the HSV
 	# color space
@@ -42,7 +35,7 @@ while True:
 	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
 	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-	# construct a mask for the color "green", then perform
+	# construct a mask for the ball color, then perform
 	# a series of dilations and erosions to remove any small
 	# blobs left in the mask
 	mask = cv2.inRange(hsv, ballLower, ballUpper)
@@ -90,6 +83,7 @@ while True:
 
 	# show the frame to our screen
 	cv2.imshow("Frame", frame)
+	cv2.imshow("test", mask )
 	key = cv2.waitKey(1) & 0xFF
 
 	# if the 'q' key is pressed, stop the loop
