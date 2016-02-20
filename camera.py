@@ -7,8 +7,8 @@ from time import time
 class VideoCamera(object):
 
     BUFFER_SIZE = 64
-    ballLower = (5, 160, 160)
-    ballUpper = (20, 255, 255)
+    ballLower = (5, 140, 140)
+    ballUpper = (30, 255, 255)
     pts = deque(maxlen=BUFFER_SIZE)
 
     def __init__(self):
@@ -49,6 +49,9 @@ class VideoCamera(object):
         mask = cv2.inRange(hsv, self.ballLower, self.ballUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
+        kernel = np.ones((5,5),np.uint8)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+
 
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
