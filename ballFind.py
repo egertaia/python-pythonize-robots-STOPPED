@@ -1,4 +1,4 @@
-# import the necessary packages
+	# import the necessary packages
 from collections import deque
 import numpy as np
 import argparse
@@ -23,7 +23,7 @@ camera = cv2.VideoCapture(0)
 
     # keep looping
 while True:
-	# grab the current frame
+	# grab the current frame and flip them to act as a mirror
 	(grabbed, frame) = camera.read()
 	grabbed = cv2.flip(grabbed,1)
 	frame = cv2.flip(frame, 1)
@@ -41,6 +41,7 @@ while True:
 	mask = cv2.inRange(hsv, ballLower, ballUpper)
 	mask = cv2.erode(mask, None, iterations=2)
 	mask = cv2.dilate(mask, None, iterations=2)
+
 
     # find contours in the mask and initialize the current
 	# (x, y) center of the ball
@@ -69,7 +70,7 @@ while True:
 	# update the points queue
 	pts.appendleft(center)
 
-    	# loop over the set of tracked points
+    # loop over the set of tracked points
 	for i in xrange(1, len(pts)):
 		# if either of the tracked points are None, ignore
 		# them
@@ -82,8 +83,13 @@ while True:
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 	# show the frame to our screen
-	cv2.imshow("Frame", frame)
-	cv2.imshow("test", mask )
+
+
+	cv2.imshow("Video", frame)
+	cv2.imshow("Mask", mask )
+
+
+    # wait for the key
 	key = cv2.waitKey(1) & 0xFF
 
 	# if the 'q' key is pressed, stop the loop
