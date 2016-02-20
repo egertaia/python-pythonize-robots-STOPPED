@@ -33,7 +33,7 @@ while True:
 	# color space
 	frame = imutils.resize(frame, width=600)
 	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-	hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+	hsv = cv2.cvtColor(blurred	, cv2.COLOR_BGR2HSV)
 
 	# construct a mask for the ball color, then perform
 	# a series of dilations and erosions to remove any small
@@ -71,7 +71,7 @@ while True:
 	pts.appendleft(center)
 
     # loop over the set of tracked points
-	for i in xrange(1, len(pts)):
+	for i in range(1, len(pts)):
 		# if either of the tracked points are None, ignore
 		# them
 		if pts[i - 1] is None or pts[i] is None:
@@ -83,7 +83,6 @@ while True:
 		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 	# show the frame to our screen
-
 
 	cv2.imshow("Video", frame)
 	cv2.imshow("Mask", mask )
