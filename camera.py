@@ -13,8 +13,8 @@ class VideoCamera(object):
          self.video = cv2.VideoCapture(0)
          # Resize camera feed to 320x240,
          # note that cameras typically support only a subset of resolutions
-         # self.video.set(3, 320)
-         # self.video.set(4, 240)
+         self.video.set(3, 320)
+         self.video.set(4, 240)
          self.cache = None
          self.timestamp = datetime.now()
          self.frames = 0
