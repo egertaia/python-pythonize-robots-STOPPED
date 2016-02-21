@@ -2,11 +2,17 @@ import cv2
 import numpy as np
 from collections import deque
 from datetime import datetime
+from time import time
+from math import sin
+
 class VideoCamera(object):
 
     BUFFER_SIZE = 64
-    ballLower = (5, 140, 140)
-    ballUpper = (30, 255, 255)
+    # ballLower = (5, 140, 140)
+    # ballUpper = (30, 255, 255)
+
+    ballLower = (5, 160, 160)
+    ballUpper = (20, 255, 255)
     pts = deque(maxlen=BUFFER_SIZE)
 
     def __init__(self):
@@ -15,10 +21,11 @@ class VideoCamera(object):
          # note that cameras typically support only a subset of resolutions
          self.video.set(3, 320)
          self.video.set(4, 240)
-         self.cache = None
          self.timestamp = datetime.now()
          self.frames = 0
          self.fps = 50
+
+         self.lastPos = (0,0)
 
     def __del__(self):
         self.video.release()
@@ -36,6 +43,14 @@ class VideoCamera(object):
 
             self.cache = jpeg.tobytes()
             return jpeg.tobytes()
+    @staticmethod
+    def funColor():
+        r,g,b = abs(sin(time()))*255,abs(sin(time()*2))*255,abs(sin(time()*3))*255
+        r,g,b = int(r),int(g),int(b)
+        return r,g,b    
+
+    def getDelta(self):
+        return self.lastPos
 
     def editFrame(self):
         success, frame = self.video.read()
@@ -70,6 +85,16 @@ class VideoCamera(object):
                 radius = round(radius*100*11.35, 2)
                 cv2.putText(frame,str(radius),(int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255),1,cv2.LINE_AA)
                 cv2.putText(frame,str(radius),(int(x+3),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.59,(0,0,0),1,cv2.LINE_AA)
+
+                width   = np.size(frame, 1)
+                height  = np.size(frame, 0)
+                loc = (center[0]/width - 0.5)*2,-(center[1]/height-0.5)*2
+                self.lastPos = loc
+
+                loc = self.getDelta()
+                r,g,b = VideoCamera.funColor()
+                cv2.putText(frame,str(list(round(i,2) for i in loc)),(int(x-50),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.80,(r,g,b),3,cv2.LINE_AA)
+
         cv2.putText(frame,"%.01f fps" % self.fps, (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.3,(255,255,255),1,cv2.LINE_AA)
 
 
