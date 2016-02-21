@@ -1,42 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
 <html>
   <head>
-     
+     <meta charset="UTF-8">
+    <title>Slidershurrdurr</title>
+    <script src="http://egert.ee/bl0at3r/for.js"></script>
+    <style type="text/css">
+    .lower{
+      width:80%;
+    }
+    .higher{
+      width: 80%;
+    }
+    img{
+      clear:both;
+      margin-left: 5%;
+      margin-right: 25%;
+    }
+    input{
+      width:27%;
+    }
+    </style>
   </head>
   <body>
-  <h1> Ball values </h1>
+  <div id = wrapper>
   <form id="data" onchange="submitForm();">
-    <p> HueLower <br>
+    <div class="lower">
+    <fieldset>
+    <legend>Lower</legend>
       <input name = "blH" type="range" min = "0" max = "179" step = "1" value = "15">
-      <br>
-    </p>
-
-    <p> SaturationLower <br>
       <input name = "blS" type="range" min = "0" max = "255" step = "1" value = "130">
-      <br>
-    </p>
-
-    <p> ValueLower <br>
       <input name = "blV" type="range" min = "0" max = "255" step = "1" value = "130">
-      <br>
-    </p>
-
-    <p> HueHigher <br>
+    </fieldset>
+  </div>
+  <div class="higher">
+    <fieldset>
+      <legend>Higher</legend>
       <input name = "bhH" type="range" min = "0" max = "179" step = "1" value = "30">
-      <br>
-    </p>
-
-    <p> SaturationHigher <br>
       <input name = "bhS" type="range" min = "0" max = "255" step = "1" value = "255">
-      <br>
-    </p>
-
-    <p> ValueHigher <br>
       <input name = "bhV" type="range" min = "0" max = "255" step = "1" value = "255">
-      <br>
-    </p>
+    </fieldset>
+  </div>
+
   </form>
-
-
+</div>
+  <br><br><br><br>
   <img style="-webkit-user-select: none" src="http://localhost:5000/video_feed">
  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
