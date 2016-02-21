@@ -7,10 +7,8 @@ from collections import deque
 from datetime import datetime
 from time import time, sleep
 from threading import Thread
-
 try:
     from PyMata.pymata import PyMata
- 
     class Motors(Thread):
         MOTOR_1_PWM = 2
         MOTOR_1_A   = 3
@@ -21,7 +19,6 @@ try:
         MOTOR_3_PWM = 8
         MOTOR_3_A   = 9
         MOTOR_3_B   = 10
-     
         def __init__(self):
             Thread.__init__(self)
             self.daemon = True
@@ -41,7 +38,6 @@ try:
             self.board.set_pin_mode(self.MOTOR_3_A,   self.board.OUTPUT, self.board.DIGITAL)
             self.board.set_pin_mode(self.MOTOR_3_B,   self.board.OUTPUT, self.board.DIGITAL)
             self.dx, self.dy = 0, 0
-     
         def stop_motors(self):
             self.board.digital_write(self.MOTOR_1_B, 0)
             self.board.digital_write(self.MOTOR_1_A, 0)
@@ -49,12 +45,10 @@ try:
             self.board.digital_write(self.MOTOR_2_A, 0)
             self.board.digital_write(self.MOTOR_3_B, 0)
             self.board.digital_write(self.MOTOR_3_A, 0)
-     
         def run(self):
             while True:
                 # Reset all direction pins to avoid damaging H-bridges
                 self.stop_motors()
-     
                 dist = abs(self.dx)
                 if dist > 2:
                     if self.dx > 0:
@@ -84,8 +78,6 @@ except:
             self.dx, self.dy = 0, 0
         def start(self):
             print("Wrooom wroom!!!! (no motors found) ")
-
-
 class FrameGrabber(Thread):
     def __init__(self, width=320, height=240):
         Thread.__init__(self)
@@ -99,12 +91,10 @@ class FrameGrabber(Thread):
         self.current_frame = None
         self.ballLower = (5, 140, 140)
         self.ballUpper = (30, 255, 255)
-    
     def getWidthHeight(self, frame):
          width   = np.size(frame, 1)
          height  = np.size(frame, 0)
          return width, height
-
     def run(self):
         while True:
             self.frames += 1
@@ -140,24 +130,15 @@ class FrameGrabber(Thread):
             cv2.putText(frame,"%.01f fps" % self.fps, (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.3,(255,255,255),1,cv2.LINE_AA)
             width, height = self.getWidthHeight(frame)
             cv2.putText(frame,str([motors.dx, motors.dy]), (int(width*0.007),int(height*0.97)), cv2.FONT_HERSHEY_SIMPLEX, 0.3,(255,255,255),1,cv2.LINE_AA)
-
             self.current_frame = np.hstack([original, cutout])
- 
 motors = Motors()
 grabber = FrameGrabber()
 motors.start()
 grabber.start()
- 
 app = Flask(__name__)
- 
 @app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/sliders')
 def sliders():
     return render_template('sliders.html')
- 
 @app.route('/video_feed')
 def video_feed():
     def generator():
