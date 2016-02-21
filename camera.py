@@ -8,13 +8,13 @@ from math import sin
 class VideoCamera(object):
 
     BUFFER_SIZE = 64
-    ballLower = (5, 140, 140)
-    ballUpper = (30, 255, 255)
     pts = deque(maxlen=BUFFER_SIZE)
 
 
     def __init__(self):
          self.video = cv2.VideoCapture(0)
+         self.ballLower = (5, 140, 140)
+         self.ballUpper = (30, 255, 255)
          # Resize camera feed to 320x240,
          # note that cameras typically support only a subset of resolutions
          # self.video.set(3, 320)

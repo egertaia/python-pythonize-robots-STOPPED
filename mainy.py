@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 from time import sleep
 from camera import *
 
@@ -39,6 +39,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/sliders')
+def sliders():
+    return render_template('sliders.html')
+
 def gen(data):
     while True:
        # with lock:
@@ -49,6 +53,24 @@ def video_feed():
     global data
     return Response(gen(data),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/camera/config', methods=['get', 'post'])
+def config():
+    global camera
+    blH = int(request.form.get('blH'))
+    blS = int(request.form.get('blS'))
+    blV = int(request.form.get('blV'))
+    bhH = int(request.form.get('bhH'))
+    bhS = int(request.form.get('bhS'))
+    bhV = int(request.form.get('bhV'))
+
+    if None not in (blH, blV, blS):
+        print ("lower range is now: " , (blH, blS, blV))
+        camera.ballLower = (blH, blS, blV)
+    if None not in (bhH, bhV, bhS):
+        print("Higher range is now: " , (bhH, bhS, bhV))
+        camera.ballHigher = (bhH, bhS, bhV)
+    return "OK"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True,use_reloader=False,threaded=True)

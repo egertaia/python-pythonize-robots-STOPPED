@@ -1,35 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Sliders</title>
-  <!--  <script src="http://egert.ee/bl0at3r/for.js"></script> 
-	Hue range is [0,179], Saturation range is [0,255] and Value range is [0,255]
-  -->
-</head>
-<body>
-<h1> Hey you Filthy man</h1>
-<h1> BALL-LOWER RANGE </h1>h1>
+<html>
+  <head>
+     
+  </head>
+  <body>
+  <h1> Ball values </h1>
+  <form id="data" onchange="submitForm();">
+    <p> HueLower <br>
+      <input name = "blH" type="range" min = "0" max = "179" step = "1" value = "15">
+      <br>
+    </p>
 
-<form>
-	<p> Hue <br>
-	<input name = "blH" type="range" min = "0" max = "179" step = "1" value = "0">
-	</p>
+    <p> SaturationLower <br>
+      <input name = "blS" type="range" min = "0" max = "255" step = "1" value = "130">
+      <br>
+    </p>
 
-	<p> Saturation <br>
-	<input name = "blS" type="range" min = "0" max = "255" step = "1" value = "0">
-	</p>
+    <p> ValueLower <br>
+      <input name = "blV" type="range" min = "0" max = "255" step = "1" value = "130">
+      <br>
+    </p>
 
-	<p> Value <br>
-	<input name = "blS" type="range" min = "0" max = "255" step = "1" value = "0">
-	</p>
+    <p> HueHigher <br>
+      <input name = "bhH" type="range" min = "0" max = "179" step = "1" value = "30">
+      <br>
+    </p>
 
-</form>
+    <p> SaturationHigher <br>
+      <input name = "bhS" type="range" min = "0" max = "255" step = "1" value = "255">
+      <br>
+    </p>
+
+    <p> ValueHigher <br>
+      <input name = "bhV" type="range" min = "0" max = "255" step = "1" value = "255">
+      <br>
+    </p>
+  </form>
 
 
-<h1> BALL-UPPER RANGE </h1>
+  <img style="-webkit-user-select: none" src="http://localhost:5000/video_feed">
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+ 
+<script type="text/javascript">
+ 
+ 
+function submitForm() {
+    // alert($("#data").serialize());
+    $.ajax({
+        url: "/camera/config",
+        type:'POST',
+        data: $("#data").serialize(),
+        success: function(msg)
+        {
+            console.log(msg);
+        }              
+    });
+}
 
-
-
-</body>
+</script>
+  </body>
 </html>
