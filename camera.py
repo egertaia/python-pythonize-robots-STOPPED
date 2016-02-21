@@ -63,7 +63,7 @@ class VideoCamera(object):
 
         blurredFrame = cv2.GaussianBlur(flippedFrame, (11, 11), 0)
         hsvFrame = cv2.cvtColor(blurredFrame, cv2.COLOR_BGR2HSV)
-
+        #print(hsvFrame)
         mask = cv2.inRange(hsvFrame, self.ballLower, self.ballUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
