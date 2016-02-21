@@ -7,76 +7,85 @@ from collections import deque
 from datetime import datetime
 from time import time, sleep
 from threading import Thread
-from PyMata.pymata import PyMata
+
+try:
+    from PyMata.pymata import PyMata
  
-class Motors(Thread):
-    MOTOR_1_PWM = 2
-    MOTOR_1_A   = 3
-    MOTOR_1_B   = 4
-    MOTOR_2_PWM = 5
-    MOTOR_2_A   = 6
-    MOTOR_2_B   = 7
-    MOTOR_3_PWM = 8
-    MOTOR_3_A   = 9
-    MOTOR_3_B   = 10
- 
-    def __init__(self):
-        Thread.__init__(self)
-        self.daemon = True
-        self.board = PyMata()
-        def signal_handler(sig, frame):
-            self.stop_motors()
-            self.board.reset()
-            sys.exit(0)
-        signal.signal(signal.SIGINT, signal_handler)
-        self.board.set_pin_mode(self.MOTOR_1_PWM, self.board.PWM,    self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_1_A,   self.board.OUTPUT, self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_1_B,   self.board.OUTPUT, self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_2_PWM, self.board.PWM,    self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_2_A,   self.board.OUTPUT, self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_2_B,   self.board.OUTPUT, self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_3_PWM, self.board.PWM,    self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_3_A,   self.board.OUTPUT, self.board.DIGITAL)
-        self.board.set_pin_mode(self.MOTOR_3_B,   self.board.OUTPUT, self.board.DIGITAL)
-        self.dx, self.dy = 0, 0
- 
-    def stop_motors(self):
-        self.board.digital_write(self.MOTOR_1_B, 0)
-        self.board.digital_write(self.MOTOR_1_A, 0)
-        self.board.digital_write(self.MOTOR_2_B, 0)
-        self.board.digital_write(self.MOTOR_2_A, 0)
-        self.board.digital_write(self.MOTOR_3_B, 0)
-        self.board.digital_write(self.MOTOR_3_A, 0)
- 
-    def run(self):
-        while True:
-            # Reset all direction pins to avoid damaging H-bridges
-            self.stop_motors()
- 
-            dist = abs(self.dx)
-            if dist > 2:
-                if self.dx > 0:
-                    print("Turning left")
+    class Motors(Thread):
+        MOTOR_1_PWM = 2
+        MOTOR_1_A   = 3
+        MOTOR_1_B   = 4
+        MOTOR_2_PWM = 5
+        MOTOR_2_A   = 6
+        MOTOR_2_B   = 7
+        MOTOR_3_PWM = 8
+        MOTOR_3_A   = 9
+        MOTOR_3_B   = 10
+     
+        def __init__(self):
+            Thread.__init__(self)
+            self.daemon = True
+            self.board = PyMata()
+            def signal_handler(sig, frame):
+                self.stop_motors()
+                self.board.reset()
+                sys.exit(0)
+            signal.signal(signal.SIGINT, signal_handler)
+            self.board.set_pin_mode(self.MOTOR_1_PWM, self.board.PWM,    self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_1_A,   self.board.OUTPUT, self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_1_B,   self.board.OUTPUT, self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_2_PWM, self.board.PWM,    self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_2_A,   self.board.OUTPUT, self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_2_B,   self.board.OUTPUT, self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_3_PWM, self.board.PWM,    self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_3_A,   self.board.OUTPUT, self.board.DIGITAL)
+            self.board.set_pin_mode(self.MOTOR_3_B,   self.board.OUTPUT, self.board.DIGITAL)
+            self.dx, self.dy = 0, 0
+     
+        def stop_motors(self):
+            self.board.digital_write(self.MOTOR_1_B, 0)
+            self.board.digital_write(self.MOTOR_1_A, 0)
+            self.board.digital_write(self.MOTOR_2_B, 0)
+            self.board.digital_write(self.MOTOR_2_A, 0)
+            self.board.digital_write(self.MOTOR_3_B, 0)
+            self.board.digital_write(self.MOTOR_3_A, 0)
+     
+        def run(self):
+            while True:
+                # Reset all direction pins to avoid damaging H-bridges
+                self.stop_motors()
+     
+                dist = abs(self.dx)
+                if dist > 2:
+                    if self.dx > 0:
+                        print("Turning left")
+                        self.board.digital_write(self.MOTOR_1_B, 1)
+                        self.board.digital_write(self.MOTOR_2_B, 1)
+                        self.board.digital_write(self.MOTOR_3_B, 1)
+                    else:
+                        print("Turning right")
+                        self.board.digital_write(self.MOTOR_1_A, 1)
+                        self.board.digital_write(self.MOTOR_2_A, 1)
+                        self.board.digital_write(self.MOTOR_3_A, 1)
+                    self.board.analog_write(self.MOTOR_1_PWM, int(dist ** 0.7 + 25))
+                    self.board.analog_write(self.MOTOR_2_PWM, int(dist ** 0.7 + 25))
+                    self.board.analog_write(self.MOTOR_3_PWM, int(dist ** 0.7 + 25))
+                elif self.dy > 30:
+                    print("Going forward")
                     self.board.digital_write(self.MOTOR_1_B, 1)
-                    self.board.digital_write(self.MOTOR_2_B, 1)
-                    self.board.digital_write(self.MOTOR_3_B, 1)
-                else:
-                    print("Turning right")
-                    self.board.digital_write(self.MOTOR_1_A, 1)
-                    self.board.digital_write(self.MOTOR_2_A, 1)
                     self.board.digital_write(self.MOTOR_3_A, 1)
-                self.board.analog_write(self.MOTOR_1_PWM, int(dist ** 0.7 + 25))
-                self.board.analog_write(self.MOTOR_2_PWM, int(dist ** 0.7 + 25))
-                self.board.analog_write(self.MOTOR_3_PWM, int(dist ** 0.7 + 25))
-            elif self.dy > 30:
-                print("Going forward")
-                self.board.digital_write(self.MOTOR_1_B, 1)
-                self.board.digital_write(self.MOTOR_3_A, 1)
-                self.board.analog_write(self.MOTOR_1_PWM, int(self.dy ** 0.5 )+30)
-                self.board.analog_write(self.MOTOR_2_PWM, 0)
-                self.board.analog_write(self.MOTOR_3_PWM, int(self.dy ** 0.5 )+30)
-            sleep(0.03)
- 
+                    self.board.analog_write(self.MOTOR_1_PWM, int(self.dy ** 0.5 )+30)
+                    self.board.analog_write(self.MOTOR_2_PWM, 0)
+                    self.board.analog_write(self.MOTOR_3_PWM, int(self.dy ** 0.5 )+30)
+                sleep(0.03)
+except:
+    class Motors:
+        def __init__(self):            
+            self.dx, self.dy = 0, 0
+        def start(self):
+            print("Wrooom wroom!!!! (no motors found) ")
+
+
 class FrameGrabber(Thread):
     def __init__(self, width=320, height=240):
         Thread.__init__(self)
