@@ -4,6 +4,7 @@ from collections import deque
 from datetime import datetime
 from time import time
 from math import sin
+import configparser
 
 class VideoCamera(object):
 
@@ -26,8 +27,15 @@ class VideoCamera(object):
          self.lastPos = (0,0)
 
     def __del__(self):
+        
         self.video.release()
-
+        config = configparser.ConfigParser()
+        config['LowerRange'] = {'Hue': '5' , 'Saturtation' : '130', 'Value' : '130'}
+        config['UpperRange'] = {'Hue': '30' , 'Saturtation' : '255', 'Value' : '255'}
+        with open('value.ini', 'w') as configfile:
+            config.write(configfile)
+       
+ 
     def get_frame(self):
             image = self.editFrame()
             self.frames -= 1
