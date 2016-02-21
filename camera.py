@@ -8,12 +8,10 @@ from math import sin
 class VideoCamera(object):
 
     BUFFER_SIZE = 64
-    # ballLower = (5, 140, 140)
-    # ballUpper = (30, 255, 255)
-
     ballLower = (5, 140, 140)
     ballUpper = (30, 255, 255)
     pts = deque(maxlen=BUFFER_SIZE)
+
 
     def __init__(self):
          self.video = cv2.VideoCapture(0)
@@ -52,22 +50,27 @@ class VideoCamera(object):
     def getDelta(self):
         return self.lastPos
 
+    def getWidthHeight(self, frame):
+         width   = np.size(frame, 1)
+         height  = np.size(frame, 0)
+         return width, height
+
     def editFrame(self):
-        success, frame = self.video.read()
-        original = frame
-        frame = cv2.flip(frame, 1)
+        success, initialFrame = self.video.read()
+        original = initialFrame
+        flippedFrame = cv2.flip(initialFrame, 1)
         original = cv2.flip(original, 1)
 
-        blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+        blurredFrame = cv2.GaussianBlur(flippedFrame, (11, 11), 0)
+        hsvFrame = cv2.cvtColor(blurredFrame, cv2.COLOR_BGR2HSV)
 
-        mask = cv2.inRange(hsv, self.ballLower, self.ballUpper)
+        mask = cv2.inRange(hsvFrame, self.ballLower, self.ballUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
         kernel = np.ones((5,5),np.uint8)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
 
-
+        #find contours from mask
         cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         if len(cnts) > 0:
 
@@ -78,28 +81,29 @@ class VideoCamera(object):
 
             if radius > 5:
 
-                cv2.circle(frame, (int(x), int(y)), int(radius),
+                cv2.circle(flippedFrame, (int(x), int(y)), int(radius),
                     (0, 255, 255), 2)
-                cv2.circle(frame, center, 5, (0, 0, 255), -1)
+                cv2.circle(flippedFrame, center, 5, (0, 0, 255), -1)
                 radius = 1/radius
                 radius = round(radius*100*11.35, 2)
-                cv2.putText(frame,str(radius),(int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255),1,cv2.LINE_AA)
-                cv2.putText(frame,str(radius),(int(x+3),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.59,(0,0,0),1,cv2.LINE_AA)
+                cv2.putText(flippedFrame,str(radius),(int(x),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.7,(255,255,255),1,cv2.LINE_AA)
+                cv2.putText(flippedFrame,str(radius),(int(x+3),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.59,(0,0,0),1,cv2.LINE_AA)
 
-                width   = np.size(frame, 1)
-                height  = np.size(frame, 0)
+                width, height = self.getWidthHeight(hsvFrame)
+
                 loc = (center[0]/width - 0.5)*2,-(center[1]/height-0.5)*2
                 self.lastPos = loc
 
                 loc = self.getDelta()
                 r,g,b = VideoCamera.funColor()
-                cv2.putText(frame,str(list(round(i,2) for i in loc)),(int(x-50),int(y)), cv2.FONT_HERSHEY_SIMPLEX, 0.80,(r,g,b),3,cv2.LINE_AA)
-
-        cv2.putText(frame,"%.01f fps" % self.fps, (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.3,(255,255,255),1,cv2.LINE_AA)
+                #distance from midposition
+                cv2.putText(flippedFrame,"DFC: " + str(list(round(i,2) for i in loc)),(int(width*0.007),int(height*0.97)), cv2.FONT_HERSHEY_SIMPLEX, 0.60,(r,g,b),1,cv2.LINE_AA)
+        #show fps
+        cv2.putText(hsvFrame,"%.01f fps" % self.fps, (10,20), cv2.FONT_HERSHEY_SIMPLEX, 0.3,(255,255,255),1,cv2.LINE_AA)
 
 
         cutout = cv2.bitwise_and(original,original, mask= mask)
 
 
-        frame = np.hstack([frame, cutout])
-        return frame
+        finalFrame = np.hstack([flippedFrame, cutout])
+        return finalFrame

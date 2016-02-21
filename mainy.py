@@ -10,7 +10,6 @@ class Data:
 
 
 def updater(data,camera):
-    print("TERE")
     while True:
         frame = camera.get_frame()
 
