@@ -11,16 +11,16 @@ class VideoCamera(object):
     # ballLower = (5, 140, 140)
     # ballUpper = (30, 255, 255)
 
-    ballLower = (5, 160, 160)
-    ballUpper = (20, 255, 255)
+    ballLower = (5, 140, 140)
+    ballUpper = (30, 255, 255)
     pts = deque(maxlen=BUFFER_SIZE)
 
     def __init__(self):
          self.video = cv2.VideoCapture(0)
          # Resize camera feed to 320x240,
          # note that cameras typically support only a subset of resolutions
-         self.video.set(3, 320)
-         self.video.set(4, 240)
+         # self.video.set(3, 320)
+         # self.video.set(4, 240)
          self.timestamp = datetime.now()
          self.frames = 0
          self.fps = 50
@@ -59,7 +59,7 @@ class VideoCamera(object):
         original = cv2.flip(original, 1)
 
         blurred = cv2.GaussianBlur(frame, (11, 11), 0)
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
 
         mask = cv2.inRange(hsv, self.ballLower, self.ballUpper)
         mask = cv2.erode(mask, None, iterations=2)
