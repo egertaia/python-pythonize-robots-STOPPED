@@ -4,56 +4,208 @@
   <head>
      <meta charset="UTF-8">
     <title>Slidershurrdurr</title>
-    <script src="http://egert.ee/bl0at3r/for.js"></script>
+    <!-- // <script src="http://egert.ee/bl0at3r/for.js"></script> -->
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='nouislider.css') }}">
+    <script  type="text/javascript" src="{{ url_for('static',filename='nouislider.js') }}"></script>
     <style type="text/css">
-    .lower{
-      width:80%;
+    body {
+          background-color: #009688;
     }
-    .higher{
-      width: 80%;
+
+    .center {
+      padding: 19px;
+      background-color: #f5f5f5;
+      border: 1px solid #e3e3e3;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+
+      margin: auto;
+      width: 1024px;
+      max-width: 80%;
+      overflow: auto 
     }
-    img{
-      clear:both;
-      margin-left: 5%;
-      margin-right: 25%;
+    .center img {
+      float: left;
+      width: 100%;
     }
-    input{
-      width:27%;
+    .colorPicker {
+      float: right;
+      width: 512px;
+      max-width: 90%;
     }
+
+    .colorPicker .sliders{
+      max-width: 90%;
+    }
+
+    .display {
+      margin: 10px; 
+      height: 100px;
+      width: 100px;
+      display: inline-block;
+      border: 1px solid #fff;
+      box-shadow: 0 0 10px;
+    }
+
+    .sliders {
+      margin: 10px;
+      display: inline-block;
+      width: 500px;
+      margin: 16px;
+    }
+
+    .no-ui-slider *{
+      transform: rotate(0deg) !important;
+    }
+
+    .noUi-tooltip {
+        display: block;
+        position: absolute;
+        border: 1px solid #D9D9D9;
+        border-radius: 3px;
+        background: #fff;
+        padding: 5px;
+        text-align: center;
+        font: 700 12px/12px Arial;
+        bottom: -32px;
+        z-index: 2;
+    }
+    .noUi-origin {
+         border-radius: 0px; 
+    }
+    .noUi-handle-lower{
+      left: -12px !important;
+    }
+    .noUi-handle-upper{
+      left: 0px !important;     
+    }
+    .noUi-handle-lower .noUi-tooltip{
+      left: -24px !important;
+    }
+    .noUi-handle-upper .noUi-tooltip{
+      left: 0px !important;     
+    }
+    .noUi-handle, .noUi-handle:before, .noUi-handle:after {
+      width: 12px !important;
+      height: 26px !important;
+      border: 1px solid #464646 !important;
+      border-radius: 0% !important;
+      background: #464646 !important;
+      cursor: default !important;
+      content: none !important;
+      box-shadow: none !important;
+    }
+
     </style>
   </head>
   <body>
-  <div id = wrapper>
-  <form id="data" onchange="submitForm();">
-    <div class="lower">
-    <fieldset>
-    <legend>Lower</legend>
-      <input name = "blH" type="range" min = "0" max = "179" step = "1" value = "15">
-      <input name = "blS" type="range" min = "0" max = "255" step = "1" value = "130">
-      <input name = "blV" type="range" min = "0" max = "255" step = "1" value = "130">
-    </fieldset>
-  </div>
-  <div class="higher">
-    <fieldset>
-      <legend>Higher</legend>
-      <input name = "bhH" type="range" min = "0" max = "179" step = "1" value = "30">
-      <input name = "bhS" type="range" min = "0" max = "255" step = "1" value = "255">
-      <input name = "bhV" type="range" min = "0" max = "255" step = "1" value = "255">
-    </fieldset>
-  </div>
-
-  </form>
-</div>
-  <br><br><br><br>
+  
+<div class="center">
   <img style="-webkit-user-select: none" src="/video_feed">
- 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
- 
+
+  <div class="colorPicker"> 
+    <div class="no-ui-slider" id="picker">
+      <br><div class="sliders" id="H"   data-min = "0" data-max = "180"  data-start="15"  data-end="30" ></div>
+      <br><div class="sliders" id="S" data-min = "0" data-max = "255"  data-start="130" data-end="255"></div>
+      <br><div class="sliders" id="V"  data-min = "0" data-max = "255"  data-start="130" data-end="255"></div>
+      <br><div class="display" id="lower" ></div>
+      <div class="display" id="upper" ></div>
+    </div>
+  </div>
+</div>
+
+
+
 <script type="text/javascript">
- 
- 
+function hsv_to_hsl(h, s, v) {
+    h = h/180;
+    s = s/255;
+    v = v/255;
+    // both hsv and hsl values are in [0, 1]
+    var l = (2 - s) * v / 2;
+    if (l != 0) {
+        if (l == 1) {
+            s = 0
+        } else if (l < 0.5) {
+            s = s * v / (l * 2)
+        } else {
+            s = s * v / (2 - l * 2)
+        }
+    }
+    return [Math.round(h*360), Math.round(s*100), Math.round(l*100)]
+  }
+
+function setColor(){
+  var lower = document.getElementById('lower');
+  var upper = document.getElementById('upper');
+
+  var blH = sliders[0].noUiSlider.get()[0];
+  var blS = sliders[1].noUiSlider.get()[0];
+  var blV = sliders[2].noUiSlider.get()[0];
+  var bhH = sliders[0].noUiSlider.get()[1];
+  var bhS = sliders[1].noUiSlider.get()[1];
+  var bhV = sliders[2].noUiSlider.get()[1];
+
+  var lowerConvert = hsv_to_hsl(blH,blS,blV);
+  var lowerColor = 'hsl(' +
+        lowerConvert[0]+ ',' +
+        lowerConvert[1]+ '%,' +
+        lowerConvert[2]+ '%)';  
+  var upperConvert = hsv_to_hsl(bhH,bhS,bhV);
+  var upperColor = 'hsl(' +
+        upperConvert[0]+ ',' +
+        upperConvert[1]+ '%,' +
+        upperConvert[2]+ '%)';
+  // Fill the color box.
+  upper.style.background = upperColor;
+  upper.style.color = upperColor;
+  lower.style.background = lowerColor;
+  lower.style.color = lowerColor;
+
+  // server side ajax stuff
+    var query = "blH="+blH+"&blS="+blS+"&blV="+blV+"&bhH="+bhH+"&bhS="+bhS+"&bhV="+bhV+"";
+    console.log(query);
+    $.ajax({
+        url: "/camera/config",
+        type:'POST',
+        data: query,
+        success: function(msg)
+        {
+            console.log(msg,query);
+        }              
+    });
+}
+
+var  sliders = $( "#picker" ).find(".sliders");
+for ( var i = 0; i < 3; i++ ) {
+  var min   = parseInt(sliders[i].getAttribute("data-min"));
+  var max   = parseInt(sliders[i].getAttribute("data-max"));
+  var start = parseInt(sliders[i].getAttribute("data-start"));
+  var end   = parseInt(sliders[i].getAttribute("data-end"));
+  noUiSlider.create(sliders[i], {
+    start: [start,end],
+    behaviour: 'drag',
+    animate: false,
+    step: 1,
+    connect: true,
+    tooltips:true,
+    range: {      'min': min,      'max': max    },
+    format: {
+      to: function ( value ) {      return Math.round(value);    },
+      from: function ( value ) {     return value;    }
+  }
+  });
+  sliders[i].noUiSlider.on('change', setColor);
+}
+setColor();
+
+
+
+</script>
+<script type="text/javascript"> 
 function submitForm() {
-    // alert($("#data").serialize());
+    console.log($("#data").serialize());
     $.ajax({
         url: "/camera/config",
         type:'POST',
@@ -64,7 +216,7 @@ function submitForm() {
         }              
     });
 }
-
 </script>
+
   </body>
 </html>
