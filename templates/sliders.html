@@ -8,9 +8,13 @@
     <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='nouislider.css') }}">
     <script  type="text/javascript" src="{{ url_for('static',filename='nouislider.js') }}"></script>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
     <style type="text/css">
     body {
           background-color: #009688;
+          color: #212121;
     }
 
     .center {
@@ -21,6 +25,7 @@
       box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 
       margin: auto;
+      margin-top: 50pt;
       width: 1024px;
       max-width: 80%;
       overflow: auto 
@@ -40,7 +45,7 @@
     }
 
     .display {
-      margin: 10px; 
+      margin: 16px; 
       height: 100px;
       width: 100px;
       display: inline-block;
@@ -97,9 +102,103 @@
       box-shadow: none !important;
     }
 
+    .home-menu {
+        padding: 0.5em;
+        text-align: center;
+        box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
+    }
+    .home-menu {
+        background: #00796B;
+    }
+    .pure-menu.pure-menu-fixed {
+        /* Fixed menus normally have a border at the bottom. */
+        border-bottom: none;
+        /* I need a higher z-index here because of the scroll-over effect. */
+        z-index: 4;
+    }
+
+    .home-menu .pure-menu-heading {
+        color: white;
+        font-weight: 400;
+        font-size: 120%;
+    }
+
+    .home-menu .pure-menu-selected a {
+        color: white;
+    }.home-menu .pure-menu-selected a:visited {
+        color: white;
+    }
+
+    .home-menu a {
+        color: #6FBEF3;
+    }.
+    .home-menu a:visited {
+        color: #6FBEF3;
+    }
+    .home-menu li a:hover,
+    .home-menu li a:focus {
+        background: none;
+        border: none;
+        color: #AECFE5;
+    }
+
+    .home-menu {
+        text-align: left;
+    }
+        .home-menu ul {
+            float: right;
+            margin-right: 60px;
+        }
+    .pure-menu-link, .pure-menu-disabled, .pure-menu-heading {
+    padding: .5em 1em;
+}
+.pure-menu-link {
+    color: #777;
+
+
+}
+.pure-menu-link, .pure-menu-heading {
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
     </style>
   </head>
   <body>
+
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="">Ministry of silly robots</a>
+
+        <ul class="pure-menu-list">
+            <li class="pure-menu-item"><a href="#" class="pure-menu-link">Home</a></li>
+            <li class="pure-menu-item  pure-menu-selected"><a href="#" class="pure-menu-link">Camera <i class="fa fa-camera"></i></a></li>
+            
+            <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+              <a href="#" id="menuLink1" class="pure-menu-link">Status <i class="fa fa-battery-quarter"></i> </a>
+              <ul class="pure-menu-children">
+                  <li class="pure-menu-item"><a href="#" class="pure-menu-link">Battery 25% <i class="fa fa-battery-quarter"></i></a></li>
+                  <li class="pure-menu-item"><a href="#" class="pure-menu-link">CPU Load 35% 
+                    <i class="fa fa-cog fa-spin"></i></a></li>
+                  <li class="pure-menu-item"><a href="#" class="pure-menu-link">Compassion 0% <i class="fa fa-heart"></i>
+                    </a></li>
+              </ul>
+            </li>
+
+            <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+            <a href="#" id="menuLink1" class="pure-menu-link">Halp <i class="fa fa-beer"></i></i> </a>
+            <ul class="pure-menu-children">
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Colors update after release</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">You can drag from the middle</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Dong anger the robots</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">They smell fear</a></li>
+                
+            </ul>
+            </li>
+            <li class="pure-menu-item"><a href="https://github.com/egaia/python-pythonize-robots" class="pure-menu-link">Git hub <i class="fa fa-github"></i></a></li>
+        </li>
+        </ul>
+    </div>
   
 <div class="center">
   <img style="-webkit-user-select: none" src="/video_feed">
